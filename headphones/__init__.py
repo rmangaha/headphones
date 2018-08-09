@@ -87,7 +87,7 @@ LATEST_VERSION = None
 COMMITS_BEHIND = None
 
 LOSSY_MEDIA_FORMATS = ["mp3", "aac", "ogg", "ape", "m4a", "asf", "wma", "opus"]
-LOSSLESS_MEDIA_FORMATS = ["flac", "aiff"]
+LOSSLESS_MEDIA_FORMATS = ["flac", "aiff", "aif"]
 MEDIA_FORMATS = LOSSY_MEDIA_FORMATS + LOSSLESS_MEDIA_FORMATS
 
 MIRRORLIST = ["musicbrainz.org", "headphones", "custom"]
@@ -417,6 +417,20 @@ def dbcheck():
         'CREATE INDEX IF NOT EXISTS tracks_Location ON tracks(Location ASC)')
     c.execute(
         'CREATE INDEX IF NOT EXISTS alltracks_Location ON alltracks(Location ASC)')
+    c.execute(
+        'CREATE INDEX IF NOT EXISTS tracks_artistid ON tracks(ArtistID ASC)')
+
+    # Speed up album page
+    c.execute('CREATE INDEX IF NOT EXISTS have_matched ON have(Matched ASC)')
+    c.execute('CREATE INDEX IF NOT EXISTS allalbums_albumid ON allalbums(AlbumID ASC)')
+    c.execute('CREATE INDEX IF NOT EXISTS alltracks_albumid ON alltracks(AlbumID ASC)')
+    c.execute('CREATE INDEX IF NOT EXISTS releases_albumid ON releases(ReleaseGroupID ASC)')
+    c.execute('CREATE INDEX IF NOT EXISTS descriptions_albumid ON descriptions(ReleaseGroupID ASC)')
+
+    # Speed up artist deletion
+    c.execute('CREATE INDEX IF NOT EXISTS allalbums_artistid ON allalbums(ArtistID ASC)')
+    c.execute('CREATE INDEX IF NOT EXISTS alltracks_artistid ON alltracks(ArtistID ASC)')
+    c.execute('CREATE INDEX IF NOT EXISTS descriptions_artistid ON descriptions(ArtistID ASC)')
 
     try:
         c.execute('SELECT IncludeExtras from artists')
